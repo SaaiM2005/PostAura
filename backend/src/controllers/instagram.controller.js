@@ -1,3 +1,4 @@
+//instagram.controller.js
 import ScheduledPost from "../models/ScheduledPost.js";
 import User from "../models/User.js";
 import { schedulePostJob } from "../utils/scheduler.js";
@@ -30,8 +31,11 @@ export const schedulePost = async (req, res) => {
 
     await schedulePostJob(post, platforms);
 
+
+
     res.json({ message: "Scheduled", post });
   } catch (err) {
+    console.error("Error in schedulePost:", err);
     console.error("Error in schedulePost:", err);
     res.status(500).json({ error: err.message || "Internal server error" });
   }

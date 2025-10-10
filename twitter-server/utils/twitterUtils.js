@@ -1,9 +1,6 @@
-// twitter-server/
+
 //     utils/
 //       twitterUtils.js
-//     server.js
-//     .env
-//     package.json
 
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";

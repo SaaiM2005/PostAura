@@ -1,63 +1,5 @@
-// import express from "express";
-// import dotenv from "dotenv";
-// import cors from "cors";
-// import { TwitterApi } from "twitter-api-v2";
-// import fetch from "node-fetch";
 
-// dotenv.config();
-
-// const app = express();
-// app.use(express.json());
-// app.use(cors());
-
-// const client = new TwitterApi({
-//   appKey: process.env.TWITTERCONSUMERKEY,
-//   appSecret: process.env.TWITTERCONSUMERSECRET,
-//   accessToken: process.env.TWITTERACCESSTOKEN,
-//   accessSecret: process.env.TWITTERACCESSTOKENSECRET,
-// });
-
-// const rwClient = client.readWrite;
-
-// app.post("/schedule-tweet", async (req, res) => {
-//   const { text, videoUrl, scheduleTime } = req.body;
-//   if (!videoUrl || !scheduleTime) {
-//     return res.status(400).json({ error: "Missing videoUrl or scheduleTime" });
-//   }
-//   const delay = new Date(scheduleTime) - new Date();
-//   if (delay < 0) {
-//     return res.status(400).json({ error: "scheduleTime must be in the future" });
-//   }
-
-//   setTimeout(async () => {
-//     try {
-//       // Download video from Cloudinary URL
-//       const response = await fetch(videoUrl);
-//       const videoBuffer = await response.buffer();
-
-//       // Upload video to Twitter
-//       const mediaId = await rwClient.v1.uploadMedia(videoBuffer, {
-//         type: "video/mp4",
-//       });
-
-//       // Post tweet with media
-//       await rwClient.v2.tweet({
-//         text,
-//         media: { media_ids: [mediaId] },
-//       });
-
-//       console.log("Tweet posted successfully");
-//     } catch (error) {
-//       console.error("Error posting tweet:", error);
-//     }
-//   }, delay);
-
-//   res.json({ message: "Tweet scheduled successfully" });
-// });
-
-// const PORT = process.env.PORT || 4001;
-// app.listen(PORT, () => console.log(`Twitter backend running on port ${PORT}`));
-
+//server.js 
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -69,7 +11,7 @@ import { Buffer } from "buffer";
 dotenv.config();
 
 TwitterApiV2Settings.deprecationWarnings = false;
-
+ 
 const app = express();
 app.use(express.json());
 app.use(cors());
