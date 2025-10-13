@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 
-const INSTAGRAM_BACKEND = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;  // Single backend URL
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const TWITTER_BACKEND = "http://localhost:4001";
 
 export default function App() {
   const [multiVideos, setMultiVideos] = useState([
@@ -72,8 +71,8 @@ export default function App() {
       // Upload to Cloudinary first
       const videoUrl = await uploadToCloudinary(video.file);
 
-      // Generate caption
-      const response = await axios.post(`${INSTAGRAM_BACKEND}/api/caption/generate`, {
+      // Generate caption using unified backend
+      const response = await axios.post(`${BACKEND_URL}/api/caption/generate`, {
         videoUrl: videoUrl,
       });
 
@@ -99,8 +98,9 @@ export default function App() {
     try {
       const videoUrl = await uploadToCloudinary(video.file);
 
+      // Schedule to Instagram (if checked)
       if (video.ig) {
-        await axios.post(`${INSTAGRAM_BACKEND}/api/instagram/schedule`, {
+        await axios.post(`${BACKEND_URL}/api/instagram/schedule`, {
           filePath: videoUrl,
           caption: video.caption,
           scheduledTime: video.scheduledTime,
@@ -108,8 +108,9 @@ export default function App() {
         });
       }
 
+      // Schedule to Twitter (if checked) - NOW SAME BACKEND
       if (video.tw) {
-        await axios.post(`${TWITTER_BACKEND}/schedule-tweet`, {
+        await axios.post(`${BACKEND_URL}/api/twitter/schedule-tweet`, {
           text: video.caption,
           videoUrl: videoUrl,
           scheduleTime: video.scheduledTime,

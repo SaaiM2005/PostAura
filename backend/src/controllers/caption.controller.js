@@ -1,3 +1,4 @@
+//caption.controller.js
 import { generateCaption } from "../services/caption.service.js";
 
 export const generateCaptionController = async (req, res) => {

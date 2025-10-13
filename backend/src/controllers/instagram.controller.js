@@ -16,7 +16,7 @@ export const schedulePost = async (req, res) => {
   }
 
   try {
-    // Assume filePath is the Cloudinary URL uploaded from frontend unsigned preset
+    // This filePath is the Cloudinary URL uploaded from frontend to work on the video uRl and keep it in cloudinary 
     const videoUrl = filePath;
 
     const post = await ScheduledPost.create({
