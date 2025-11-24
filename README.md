@@ -14,7 +14,7 @@ PostAura is an all-in-one AI-powered platform to automate and manage social medi
 ## 📸 Screenshots
 
 ### 🏠 Home Page  
-![Home Page](assets/screenshots/home_page.png)
+![Home Page](assets/screenshots/home_page.jpg)
 
 ### 🗓️ Schedule Post  
 ![Schedule Page](assets/screenshots/schedule_page.png)
