@@ -1,12 +1,15 @@
 import React, { useState } from "react";
+import HomePage from "./components/HomePage";
+import LiquidEther from "./components/LiquidEther";
 import axios from "axios";
 import "./App.css";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;  // Single backend URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState("home");
   const [multiVideos, setMultiVideos] = useState([
     { file: null, videoUrl: null, caption: "", scheduledTime: "", ig: true, tw: true, generating: false },
   ]);
@@ -64,14 +67,10 @@ export default function App() {
     const newData = [...multiVideos];
     newData[idx].generating = true;
     setMultiVideos(newData);
-
     setStatus(`Generating caption for ${video.file.name}...`);
 
     try {
-      // Upload to Cloudinary first
       const videoUrl = await uploadToCloudinary(video.file);
-
-      // Generate caption using unified backend
       const response = await axios.post(`${BACKEND_URL}/api/caption/generate`, {
         videoUrl: videoUrl,
       });
@@ -79,12 +78,12 @@ export default function App() {
       newData[idx].caption = response.data.caption;
       newData[idx].generating = false;
       setMultiVideos(newData);
-      setStatus(`Caption generated successfully for ${video.file.name}!`);
+      setStatus(`Caption generated successfully!`);
     } catch (error) {
       console.error("Error generating caption:", error);
       newData[idx].generating = false;
       setMultiVideos(newData);
-      setStatus(`Error generating caption: ${error.message}`);
+      setStatus(`Error: ${error.message}`);
     }
   };
 
@@ -94,11 +93,10 @@ export default function App() {
       alert("Select file and time");
       return;
     }
-    setStatus(`Scheduling video ${video.file.name}...`);
+    setStatus(`Scheduling video...`);
     try {
       const videoUrl = await uploadToCloudinary(video.file);
 
-      // Schedule to Instagram (if checked)
       if (video.ig) {
         await axios.post(`${BACKEND_URL}/api/instagram/schedule`, {
           filePath: videoUrl,
@@ -108,7 +106,6 @@ export default function App() {
         });
       }
 
-      // Schedule to Twitter (if checked) - NOW SAME BACKEND
       if (video.tw) {
         await axios.post(`${BACKEND_URL}/api/twitter/schedule-tweet`, {
           text: video.caption,
@@ -117,7 +114,7 @@ export default function App() {
         });
       }
 
-      setStatus(`Scheduled ${video.file.name} successfully!`);
+      setStatus(`Scheduled successfully!`);
 
       if (idx === multiVideos.length - 1) {
         setMultiVideos([
@@ -130,72 +127,103 @@ export default function App() {
     }
   };
 
-  return (
-    <div className="container">
-      <h1>Social Media Manager</h1>
-      <h3>Multiple Videos</h3>
-      {multiVideos.map((v, idx) => (
-        <div key={idx} className="video-card">
-          <div className="file-section">
-            <input
-              type="file"
-              accept="video/*"
-              onChange={(e) => handleFileChange(idx, e.target.files[0])}
-              id={`file-${idx}`}
-              className="file-input"
-            />
-            <label htmlFor={`file-${idx}`} className="file-label">
-              Choose File
-            </label>
-            {v.videoUrl && (
-              <div className="video-preview">
-                <video src={v.videoUrl} controls width="300" />
-                <p className="filename">{v.file.name}</p>
-              </div>
-            )}
-          </div>
+  if (currentPage === "home") {
+    return <HomePage onNavigate={() => setCurrentPage("schedule")} />;
+  }
 
-          <div className="caption-section">
+  return (
+    <div className="schedule-page">
+      {/* LiquidEther Background for Schedule Page */}
+      <div style={{ position: 'fixed', width: '100%', height: '100%', top: 0, left: 0, zIndex: 0 }}>
+        <LiquidEther
+          colors={['#5227FF', '#FF9FFC', '#B19EEF']}
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          viscous={30}
+          iterationsViscous={32}
+          iterationsPoisson={32}
+          resolution={0.5}
+          isBounce={false}
+          autoDemo={true}
+          autoSpeed={0.5}
+          autoIntensity={2.2}
+          takeoverDuration={0.25}
+          autoResumeDelay={3000}
+          autoRampDuration={0.6}
+        />
+      </div>
+      
+      <button className="back-btn" onClick={() => setCurrentPage("home")}>
+        ← Back to Home
+      </button>
+      
+      <div className="container">
+        <h1>Social Media Manager</h1>
+        <h3>Multiple Videos</h3>
+        {multiVideos.map((v, idx) => (
+          <div key={idx} className="video-card">
+            <div className="file-section">
+              <input
+                type="file"
+                accept="video/*"
+                onChange={(e) => handleFileChange(idx, e.target.files[0])}
+                id={`file-${idx}`}
+                className="file-input"
+              />
+              <label htmlFor={`file-${idx}`} className="file-label">
+                Choose File
+              </label>
+              {v.videoUrl && (
+                <div className="video-preview">
+                  <video src={v.videoUrl} controls width="300" />
+                  <p className="filename">{v.file.name}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="caption-section">
+              <input
+                type="text"
+                placeholder="Caption"
+                value={v.caption}
+                onChange={(e) => handleCaptionChange(idx, e.target.value)}
+                className="caption-input"
+              />
+              <button
+                onClick={() => generateCaption(idx)}
+                disabled={!v.file || v.generating}
+                className="generate-btn"
+              >
+                {v.generating ? "Generating..." : "Generate Caption"}
+              </button>
+            </div>
+
             <input
-              type="text"
-              placeholder="Caption"
-              value={v.caption}
-              onChange={(e) => handleCaptionChange(idx, e.target.value)}
-              className="caption-input"
+              type="datetime-local"
+              value={v.scheduledTime}
+              onChange={(e) => handleTimeChange(idx, e.target.value)}
+              className="datetime-input"
             />
-            <button
-              onClick={() => generateCaption(idx)}
-              disabled={!v.file || v.generating}
-              className="generate-btn"
-            >
-              {v.generating ? "Generating..." : "Generate Caption"}
+
+            <div className="platform-checkboxes">
+              <label>
+                <input type="checkbox" checked={v.ig} onChange={() => handleCheckboxChange(idx, "ig")} />
+                Instagram
+              </label>
+              <label>
+                <input type="checkbox" checked={v.tw} onChange={() => handleCheckboxChange(idx, "tw")} />
+                Twitter
+              </label>
+            </div>
+
+            <button onClick={() => scheduleVideo(idx)} className="schedule-btn">
+              Schedule This Video
             </button>
           </div>
-
-          <input
-            type="datetime-local"
-            value={v.scheduledTime}
-            onChange={(e) => handleTimeChange(idx, e.target.value)}
-            className="datetime-input"
-          />
-
-          <div className="platform-checkboxes">
-            <label>
-              <input type="checkbox" checked={v.ig} onChange={() => handleCheckboxChange(idx, "ig")} />
-              Instagram
-            </label>
-            <label>
-              <input type="checkbox" checked={v.tw} onChange={() => handleCheckboxChange(idx, "tw")} />
-              Twitter
-            </label>
-          </div>
-
-          <button onClick={() => scheduleVideo(idx)} className="schedule-btn">
-            Schedule This Video
-          </button>
-        </div>
-      ))}
-      <pre className="status">{status}</pre>
+        ))}
+        <pre className="status">{status}</pre>
+      </div>
     </div>
   );
 }
