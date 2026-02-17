@@ -32,7 +32,8 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import instagramRoutes from "./src/routes/instagram.routes.js";
 import captionRoutes from "./src/routes/caption.routes.js";
-import twitterRoutes from "./src/routes/twitter.routes.js";  // NEW
+import twitterRoutes from "./src/routes/twitter.routes.js";
+import analyticsRoutes from "./src/routes/analytics.routes.js";
 
 dotenv.config();
 
@@ -49,7 +50,8 @@ mongoose.connect(process.env.MONGOURI).then(
 // Mount all routes
 app.use("/api/instagram", instagramRoutes);
 app.use("/api/caption", captionRoutes);
-app.use("/api/twitter", twitterRoutes);  // NEW
+app.use("/api/twitter", twitterRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Unified backend (Instagram + Twitter) running on port ${PORT}`));

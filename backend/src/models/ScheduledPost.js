@@ -5,6 +5,7 @@ const ScheduledPostSchema = new mongoose.Schema({
   videoUrl: String,
   caption: String,
   scheduledTime: Date,
-  status: { type: String, enum: ["PENDING", "POSTED", "FAILED"], default: "PENDING" }
+  status: { type: String, enum: ["PENDING", "POSTED", "FAILED"], default: "PENDING" },
+  usedOptimalTiming: { type: Boolean, default: false }
 });
 export default mongoose.model("ScheduledPost", ScheduledPostSchema);
