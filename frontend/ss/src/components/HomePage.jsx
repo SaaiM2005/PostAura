@@ -19,9 +19,7 @@ export default function HomePage({ onNavigate }) {
       link: "#about",
       onClick: () => {
         const aboutSection = document.getElementById("features")
-        if (aboutSection) {
-          aboutSection.scrollIntoView({ behavior: "smooth" })
-        }
+        if (aboutSection) aboutSection.scrollIntoView({ behavior: "smooth" })
       },
     },
     {
@@ -34,7 +32,7 @@ export default function HomePage({ onNavigate }) {
       label: "Analytics Dashboard",
       ariaLabel: "View analytics and scheduled posts",
       link: "#",
-      onClick: () => onNavigate && onNavigate('analytics'),
+      onClick: () => onNavigate && onNavigate("analytics"),
     },
   ]
 
@@ -52,10 +50,8 @@ export default function HomePage({ onNavigate }) {
         '[data-menu-open="true"], .menu--open, .staggered-menu.open, [aria-expanded="true"]',
       )
       const bodyHas = document.body.classList.contains("menu-open")
-      const isOpen = Boolean(anyOpenEl) || bodyHas
-      setMenuOpen(isOpen)
+      setMenuOpen(Boolean(anyOpenEl) || bodyHas)
     }
-
     const observer = new MutationObserver(updateOpenState)
     observer.observe(document.documentElement, {
       attributes: true,
@@ -63,45 +59,49 @@ export default function HomePage({ onNavigate }) {
       subtree: true,
       attributeFilter: ["class", "data-menu-open", "aria-expanded"],
     })
-
     updateOpenState()
     return () => observer.disconnect()
   }, [])
 
+  const pillars = [
+    { num: "01", title: "AI Caption Engine", desc: "Video-to-caption in seconds" },
+    { num: "02", title: "Smart Scheduling", desc: "Peak-time auto-posting" },
+    { num: "03", title: "Deep Analytics", desc: "Real-time engagement data" },
+  ]
+
+  const features = [
+    { icon: "🎥", label: "Video Upload", desc: "Upload directly from your device" },
+    { icon: "✍️", label: "AI Captions", desc: "Generate captions from video content" },
+    { icon: "⏰", label: "Smart Scheduling", desc: "Post at peak time automatically" },
+    { icon: "📊", label: "Multi-Platform", desc: "Instagram & Twitter in one place" },
+  ]
+
+  const milestones = [
+    { done: true, icon: "✅", title: "Post Scheduling & Auto Posting", sub: "Schedule content across Instagram & Twitter" },
+    { done: true, icon: "✅", title: "AI Caption Generation", sub: "AI-powered captions from video content" },
+    { done: true, icon: "✅", title: "Analytics Dashboard", sub: "Full dashboard with charts & engagement data" },
+    { done: false, icon: "⏳", title: "Social Listening Dashboard", sub: "Real-time monitoring — Coming Soon" },
+    { done: true, icon: "✅", title: "Advanced Sentiment Analysis", sub: "Emotion detection" },
+  ]
+
   return (
     <div className={`homepage ${menuOpen ? "menu-open" : ""}`}>
-      {/* LiquidEther Background */}
-      <div
-        style={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          top: 0,
-          left: 0,
-          zIndex: 0,
-          pointerEvents: "none"
-        }}
-      >
+
+      {/* ── LiquidEther BG (unchanged) */}
+      <div style={{ position: "fixed", width: "100%", height: "100%", top: 0, left: 0, zIndex: 0, pointerEvents: "none" }}>
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
-          mouseForce={20}
-          cursorSize={100}
-          isViscous={false}
-          viscous={30}
-          iterationsViscous={32}
-          iterationsPoisson={32}
-          resolution={0.5}
-          isBounce={false}
-          autoDemo={true}
-          autoSpeed={0.5}
-          autoIntensity={2.2}
-          takeoverDuration={0.25}
-          autoResumeDelay={3000}
-          autoRampDuration={0.6}
+          mouseForce={20} cursorSize={100}
+          isViscous={false} viscous={30}
+          iterationsViscous={32} iterationsPoisson={32}
+          resolution={0.5} isBounce={false}
+          autoDemo={true} autoSpeed={0.5}
+          autoIntensity={2.2} takeoverDuration={0.25}
+          autoResumeDelay={3000} autoRampDuration={0.6}
         />
       </div>
 
-      {/* StaggeredMenu */}
+      {/* ── StaggeredMenu (unchanged) */}
       <StaggeredMenu
         position="right"
         items={menuItems}
@@ -112,105 +112,123 @@ export default function HomePage({ onNavigate }) {
         openMenuButtonColor="#000"
         changeMenuColorOnOpen={true}
         colors={["#B19EEF", "#5227FF"]}
-
         accentColor="#5227FF"
         isFixed={true}
       />
 
-      {/* Content Container with Shift Animation */}
+      {/* ── Page content */}
       <div className="content-wrapper">
-        <div className="hero-section">
+
+        {/* ════ HERO ════ */}
+        <section className="hero-section">
           <div className="hero-content">
-            <div className="hero-badge">
-              <span>✨ AI-Powered Social Media Management Platform</span>
+
+            {/* eyebrow */}
+            <div className="hero-eyebrow">
+              <span className="eyebrow-dot" />
+              <span>AI-Powered Social Media Suite</span>
             </div>
 
+            {/* giant editorial headline */}
             <h1 className="hero-title">
-              Complete Social Media
-              <span className="gradient-text"> Management Suite</span>
+              <span className="title-line title-line--1">Post</span>
+              <span className="title-line title-line--2 gradient-text">Aura</span>
             </h1>
 
             <p className="hero-description">
-              An intelligent platform for managing social media at scale. Automate scheduling, generate AI captions,
-              monitor conversations, and analyze sentiment across all your social channels.
+              Automate scheduling, generate AI captions, and analyse engagement
+              across Instagram &amp; Twitter — all in one intelligent platform.
             </p>
 
-            <div className="objectives-list">
-              <div className="objective completed">
-                <span className="status-icon">✅</span>
-                <div>
-                  <h4>Post Scheduling and Auto Posting</h4>
-                  <p>Schedule content across Instagram & Twitter</p>
-                </div>
-              </div>
 
-              <div className="objective completed">
-                <span className="status-icon">✅</span>
-                <div>
-                  <h4>Content Suggestion and Caption Generation</h4>
-                  <p>AI-powered captions from video content</p>
-                </div>
-
+            {/* progress pill */}
+            <div className="progress-pill">
+              <div className="pill-bar">
+                <div className="pill-fill" style={{ width: "100%" }} />
               </div>
-              <div className="objective completed">
-                <span className="status-icon">✅</span>
-                <div>
-                  <h4>Analytics Dashboard</h4>
-                  <p>Shows dashboard of scheduled posts</p>
-                </div>
-              </div>
-
-              <div className="objective upcoming">
-                <span className="status-icon">⏳</span>
-                <div>
-                  <h4>Social Listening Dashboard</h4>
-                  <p>Real-time monitoring (Coming Soon)</p>
-                </div>
-              </div>
-
-              <div className="objective upcoming">
-                <span className="status-icon">🔄</span>
-                <div>
-                  <h4>Advanced Sentiment Analysis</h4>
-                  <p>Emotion detection (Coming Soon)</p>
-                </div>
-              </div>
+              <span>Phase 1 Complete · 100% Core Features Live</span>
             </div>
 
-            <div className="progress-indicator">
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: "100%" }}></div>
-              </div>
-              <p className="progress-text">Phase 1 Complete: 100% of Core Features Implemented</p>
-            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="features-section" id="features">
-          <h2>Powerful Features</h2>
+        {/* ════ NUMBERED BANNER ════ */}
+        <section className="banner-section">
+          <div className="numbered-banner">
+            {pillars.map((p, i) => (
+              <div className="banner-item" key={i}>
+                <span className="banner-num">{p.num}</span>
+                <div className="banner-text">
+                  <strong>{p.title}</strong>
+                  <span>{p.desc}</span>
+                </div>
+                {i < pillars.length - 1 && <div className="banner-divider" />}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ════ ABOUT SPLIT ════ */}
+        <section className="about-section" id="features">
+          <div className="about-left">
+            <h2 className="about-headline">
+              An intelligent platform built for creators&nbsp;&amp;&nbsp;brands.
+            </h2>
+          </div>
+          <div className="about-right">
+            <p>Schedule posts at peak engagement times using AI-driven timing analysis.</p>
+            <p>Generate compelling captions directly from your video content in seconds.</p>
+            <p>Track real-time analytics including engagement, timing and platform split.</p>
+          </div>
+        </section>
+
+        {/* ════ FEATURE CARDS ════ */}
+        <section className="features-section">
+          <div className="section-label">
+            <span className="label-line" />
+            <span>What we offer</span>
+          </div>
+          <h2 className="section-title">Powerful Features</h2>
           <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">🎥</div>
-              <h3>Video Upload</h3>
-              <p>Upload videos directly from your device</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">✍️</div>
-              <h3>AI Captions</h3>
-              <p>Generate engaging captions automatically</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">⏰</div>
-              <h3>Smart Scheduling</h3>
-              <p>Post at the perfect time on multiple platforms</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">📊</div>
-              <h3>Multi-Platform</h3>
-              <p>Instagram & Twitter in one place</p>
-            </div>
+            {features.map((f, i) => (
+              <div className="feature-card" key={i}>
+                <div className="feature-number">0{i + 1}</div>
+                <div className="feature-icon-wrap">{f.icon}</div>
+                <h3>{f.label}</h3>
+                <p>{f.desc}</p>
+              </div>
+            ))}
           </div>
-        </div>
+        </section>
+
+        {/* ════ ROADMAP ════ */}
+        <section className="roadmap-section">
+          <div className="section-label">
+            <span className="label-line" />
+            <span>Milestones</span>
+          </div>
+          <h2 className="section-title">Development Roadmap</h2>
+          <div className="roadmap-list">
+            {milestones.map((m, i) => (
+              <div className={`roadmap-item ${m.done ? "roadmap-item--done" : "roadmap-item--pending"}`} key={i}>
+                <span className="roadmap-icon">{m.icon}</span>
+                <div className="roadmap-text">
+                  <strong>{m.title}</strong>
+                  <span>{m.sub}</span>
+                </div>
+                <span className={`roadmap-badge ${m.done ? "badge-done" : "badge-soon"}`}>
+                  {m.done ? "Live" : "Soon"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ════ FOOTER CTA ════ */}
+        <section className="footer-cta">
+          <h2>Ready to elevate your social presence?</h2>
+        </section>
+
       </div>
     </div>
   )
