@@ -30,6 +30,12 @@ export default function HomePage({ onNavigate }) {
       link: "#",
       onClick: onNavigate,
     },
+    {
+      label: "Analytics Dashboard",
+      ariaLabel: "View analytics and scheduled posts",
+      link: "#",
+      onClick: () => onNavigate && onNavigate('analytics'),
+    },
   ]
 
   const socialItems = [
@@ -66,14 +72,14 @@ export default function HomePage({ onNavigate }) {
     <div className={`homepage ${menuOpen ? "menu-open" : ""}`}>
       {/* LiquidEther Background */}
       <div
-        style={{ 
-          position: "fixed", 
-          width: "100%", 
-          height: "100%", 
-          top: 0, 
-          left: 0, 
-          zIndex: 0, 
-          pointerEvents: "none" 
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          top: 0,
+          left: 0,
+          zIndex: 0,
+          pointerEvents: "none"
         }}
       >
         <LiquidEther
@@ -106,7 +112,7 @@ export default function HomePage({ onNavigate }) {
         openMenuButtonColor="#000"
         changeMenuColorOnOpen={true}
         colors={["#B19EEF", "#5227FF"]}
-        
+
         accentColor="#5227FF"
         isFixed={true}
       />
@@ -144,10 +150,18 @@ export default function HomePage({ onNavigate }) {
                   <h4>Content Suggestion and Caption Generation</h4>
                   <p>AI-powered captions from video content</p>
                 </div>
+
+              </div>
+              <div className="objective completed">
+                <span className="status-icon">✅</span>
+                <div>
+                  <h4>Analytics Dashboard</h4>
+                  <p>Shows dashboard of scheduled posts</p>
+                </div>
               </div>
 
               <div className="objective upcoming">
-                <span className="status-icon">🔄</span>
+                <span className="status-icon">⏳</span>
                 <div>
                   <h4>Social Listening Dashboard</h4>
                   <p>Real-time monitoring (Coming Soon)</p>
@@ -165,9 +179,9 @@ export default function HomePage({ onNavigate }) {
 
             <div className="progress-indicator">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: "50%" }}></div>
+                <div className="progress-fill" style={{ width: "70%" }}></div>
               </div>
-              <p className="progress-text">Phase 1 Complete: 50% of Core Features Implemented</p>
+              <p className="progress-text">Phase 1 Complete: 70% of Core Features Implemented</p>
             </div>
           </div>
         </div>

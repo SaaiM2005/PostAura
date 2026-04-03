@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import HomePage from "./components/HomePage";
+import Analytics from "./components/Analytics";
 import LiquidEther from "./components/LiquidEther";
 import axios from "axios";
 import "./App.css";
@@ -11,7 +12,7 @@ const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [multiVideos, setMultiVideos] = useState([
-    { file: null, videoUrl: null, caption: "", scheduledTime: "", ig: true, tw: true, generating: false },
+    { file: null, videoUrl: null, caption: "", scheduledTime: "", ig: true, tw: true, generating: false, useOptimalTiming: false },
   ]);
   const [status, setStatus] = useState("");
 
@@ -37,6 +38,12 @@ export default function App() {
   const handleCheckboxChange = (idx, platform) => {
     const newData = [...multiVideos];
     newData[idx][platform] = !newData[idx][platform];
+    setMultiVideos(newData);
+  };
+
+  const handleOptimalTimingToggle = (idx) => {
+    const newData = [...multiVideos];
+    newData[idx].useOptimalTiming = !newData[idx].useOptimalTiming;
     setMultiVideos(newData);
   };
 
@@ -89,37 +96,74 @@ export default function App() {
 
   const scheduleVideo = async (idx) => {
     const video = multiVideos[idx];
-    if (!video.file || !video.scheduledTime) {
-      alert("Select file and time");
+    if (!video.file) {
+      alert("Please select a video file");
+      return;
+    }
+    if (!video.useOptimalTiming && !video.scheduledTime) {
+      alert("Please select a time or enable optimal timing");
       return;
     }
     setStatus(`Scheduling video...`);
     try {
       const videoUrl = await uploadToCloudinary(video.file);
+      let optimalTimeInfo = null;
 
       if (video.ig) {
-        await axios.post(`${BACKEND_URL}/api/instagram/schedule`, {
+        const response = await axios.post(`${BACKEND_URL}/api/instagram/schedule`, {
           filePath: videoUrl,
           caption: video.caption,
-          scheduledTime: video.scheduledTime,
+          scheduledTime: video.useOptimalTiming ? undefined : video.scheduledTime,
           platforms: ["instagram"],
+          useOptimalTiming: video.useOptimalTiming,
         });
+        if (video.useOptimalTiming && response.data.optimalTime) {
+          optimalTimeInfo = {
+            time: response.data.optimalTime, // Store raw ISO date string
+            reason: response.data.optimalReason
+          };
+        }
       }
 
       if (video.tw) {
         await axios.post(`${BACKEND_URL}/api/twitter/schedule-tweet`, {
           text: video.caption,
           videoUrl: videoUrl,
-          scheduleTime: video.scheduledTime,
+          scheduleTime: video.useOptimalTiming ? undefined : video.scheduledTime,
         });
       }
 
-      setStatus(`Scheduled successfully!`);
+      if (optimalTimeInfo) {
+        const scheduledDate = new Date(optimalTimeInfo.time);
+        const dayOfWeek = scheduledDate.toLocaleDateString('en-US', { weekday: 'long' });
+        const timeString = scheduledDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const dateString = scheduledDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+        setStatus(
+          `🎯 SCHEDULED FOR OPTIMAL ENGAGEMENT!\n\n` +
+          `📅 ${dayOfWeek}, ${dateString}\n` +
+          `⏰ ${timeString}\n\n` +
+          `✨ ${optimalTimeInfo.reason}\n\n` +
+          `Your post will be published automatically at this peak engagement time for maximum reach!`
+        );
+      } else {
+        const scheduledDate = new Date(video.scheduledTime);
+        const dayOfWeek = scheduledDate.toLocaleDateString('en-US', { weekday: 'long' });
+        const timeString = scheduledDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const dateString = scheduledDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+        setStatus(
+          `✅ SCHEDULED SUCCESSFULLY!\n\n` +
+          `📅 ${dayOfWeek}, ${dateString}\n` +
+          `⏰ ${timeString}\n\n` +
+          `Your post will be published at the scheduled time.`
+        );
+      }
 
       if (idx === multiVideos.length - 1) {
         setMultiVideos([
           ...multiVideos,
-          { file: null, videoUrl: null, caption: "", scheduledTime: "", ig: true, tw: true, generating: false },
+          { file: null, videoUrl: null, caption: "", scheduledTime: "", ig: true, tw: true, generating: false, useOptimalTiming: false },
         ]);
       }
     } catch (err) {
@@ -128,7 +172,18 @@ export default function App() {
   };
 
   if (currentPage === "home") {
-    return <HomePage onNavigate={() => setCurrentPage("schedule")} />;
+    return <HomePage onNavigate={(page) => setCurrentPage(page || "schedule")} />;
+  }
+
+  if (currentPage === "analytics") {
+    return (
+      <div className="app-container">
+        <button onClick={() => setCurrentPage("home")} className="back-btn">
+          ← Back to Home
+        </button>
+        <Analytics />
+      </div>
+    );
   }
 
   return (
@@ -153,11 +208,11 @@ export default function App() {
           autoRampDuration={0.6}
         />
       </div>
-      
+
       <button className="back-btn" onClick={() => setCurrentPage("home")}>
         ← Back to Home
       </button>
-      
+
       <div className="container">
         <h1>Social Media Manager</h1>
         <h3>Multiple Videos</h3>
@@ -199,12 +254,33 @@ export default function App() {
               </button>
             </div>
 
-            <input
-              type="datetime-local"
-              value={v.scheduledTime}
-              onChange={(e) => handleTimeChange(idx, e.target.value)}
-              className="datetime-input"
-            />
+            <div className="optimal-timing-section">
+              <label className="optimal-timing-toggle">
+                <input
+                  type="checkbox"
+                  checked={v.useOptimalTiming}
+                  onChange={() => handleOptimalTimingToggle(idx)}
+                  className="optimal-timing-checkbox"
+                />
+                <span className="optimal-timing-label">
+                  ✨ Use Optimal Timing for Maximum Reach
+                </span>
+              </label>
+              {v.useOptimalTiming && (
+                <p className="optimal-timing-info">
+                  📊 Will automatically schedule at peak engagement time
+                </p>
+              )}
+            </div>
+
+            {!v.useOptimalTiming && (
+              <input
+                type="datetime-local"
+                value={v.scheduledTime}
+                onChange={(e) => handleTimeChange(idx, e.target.value)}
+                className="datetime-input"
+              />
+            )}
 
             <div className="platform-checkboxes">
               <label>

@@ -196,6 +196,67 @@ h3 {
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
+/* Optimal Timing Section */
+.optimal-timing-section {
+  margin-bottom: 16px;
+}
+
+.optimal-timing-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.optimal-timing-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.optimal-timing-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #8b5cf6;
+}
+
+.optimal-timing-label {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.optimal-timing-info {
+  margin-top: 12px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(109, 40, 217, 0.15) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 .platform-checkboxes {
   display: flex;
   gap: 24px;
@@ -251,20 +312,48 @@ h3 {
 }
 
 .status {
-  background: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(109, 40, 217, 0.15) 100%);
   backdrop-filter: blur(20px);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
   max-width: 100%;
   overflow-x: auto;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
   position: relative;
   z-index: 1;
   margin-top: 24px;
+  white-space: pre-line;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Back Button */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(109, 40, 217, 0.2) 100%);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(109, 40, 217, 0.3) 100%);
+  transform: translateX(-5px);
+  box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
 }
 
 /* Scrollbar Styling */
@@ -291,19 +380,19 @@ h3 {
   .container {
     padding: 80px 16px 16px;
   }
-  
+
   h1 {
     font-size: 2rem;
   }
-  
+
   .caption-section {
     flex-direction: column;
   }
-  
+
   .generate-btn {
     width: 100%;
   }
-  
+
   .platform-checkboxes {
     flex-direction: column;
     gap: 12px;
