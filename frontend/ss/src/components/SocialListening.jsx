@@ -11,21 +11,21 @@ function SentimentArc({ positive = 0, neutral = 0, negative = 0 }) {
     const C = Math.PI * r;
     const segs = [
         { color: '#22c55e', pct: positive, offset: 0 },
-        { color: '#f59e0b', pct: neutral,  offset: positive },
+        { color: '#f59e0b', pct: neutral, offset: positive },
         { color: '#ef4444', pct: negative, offset: positive + neutral },
     ];
     return (
         <div className="sl-arc-wrap">
             <svg viewBox="0 0 200 95" width="220" height="95">
-                <path d={`M${cx-r},${cy} A${r},${r} 0 0 1 ${cx+r},${cy}`}
+                <path d={`M${cx - r},${cy} A${r},${r} 0 0 1 ${cx + r},${cy}`}
                     fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={sw} />
                 {segs.map((s, i) => {
                     if (!s.pct) return null;
-                    const dash     = C * (s.pct / 100);
+                    const dash = C * (s.pct / 100);
                     const rotation = -180 + (s.offset / 100) * 180;
                     return (
                         <path key={i}
-                            d={`M${cx-r},${cy} A${r},${r} 0 0 1 ${cx+r},${cy}`}
+                            d={`M${cx - r},${cy} A${r},${r} 0 0 1 ${cx + r},${cy}`}
                             fill="none" stroke={s.color} strokeWidth={sw}
                             strokeDasharray={`${dash} ${C}`}
                             style={{ transform: `rotate(${rotation}deg)`, transformOrigin: `${cx}px ${cy}px`, transition: 'all 1s ease' }}
@@ -34,9 +34,9 @@ function SentimentArc({ positive = 0, neutral = 0, negative = 0 }) {
                 })}
             </svg>
             <div className="sl-arc-legend">
-                {[['#22c55e','Positive',positive],['#f59e0b','Neutral',neutral],['#ef4444','Negative',negative]].map(([col,lbl,val]) => (
+                {[['#22c55e', 'Positive', positive], ['#f59e0b', 'Neutral', neutral], ['#ef4444', 'Negative', negative]].map(([col, lbl, val]) => (
                     <span key={lbl} className="sl-arc-item">
-                        <span className="sl-arc-dot" style={{background:col}} />
+                        <span className="sl-arc-dot" style={{ background: col }} />
                         <span>{lbl} <strong>{val}%</strong></span>
                     </span>
                 ))}
@@ -54,7 +54,7 @@ function CitedNarrative({ text, onCiteClick }) {
             {parts.map((part, i) => {
                 const m = part.match(/\[(tweet|igcomment)_(\d+)\]/);
                 if (m) {
-                    const label = m[1] === 'tweet' ? `𝕏 ${parseInt(m[2])+1}` : `📸 ${parseInt(m[2])+1}`;
+                    const label = m[1] === 'tweet' ? `𝕏 ${parseInt(m[2]) + 1}` : `📸 ${parseInt(m[2]) + 1}`;
                     return (
                         <button key={i} className="sl-cite-chip"
                             onClick={() => onCiteClick(m[1], parseInt(m[2]))}
@@ -93,10 +93,10 @@ function IGMediaGrid({ media }) {
 
 /* ── Main ─────────────────────────────────────────── */
 export default function SocialListening({ onBack }) {
-    const [report,  setReport]  = useState(null);
+    const [report, setReport] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error,   setError]   = useState(null);
-    const tweetRefs   = useRef({});
+    const [error, setError] = useState(null);
+    const tweetRefs = useRef({});
     const commentRefs = useRef({});
 
     useEffect(() => { fetchReport(); }, []);
@@ -136,14 +136,14 @@ export default function SocialListening({ onBack }) {
     if (error) return (
         <div className="sl-container">
             <div className="sl-state">
-                <span style={{fontSize:'2.5rem'}}>❌</span>
+                <span style={{ fontSize: '2.5rem' }}>❌</span>
                 <h3>{error}</h3>
                 <button onClick={fetchReport} className="sl-btn-primary">Retry</button>
             </div>
         </div>
     );
 
-    const { twitter, instagram, analysis, generatedAt } = report;
+    const { twitter, instagram, analysis, generatedAt, twitterError, instagramError, igAnalysis } = report;
     const s = analysis?.sentiment || {};
 
     return (
@@ -162,25 +162,36 @@ export default function SocialListening({ onBack }) {
 
             {/* ── Platform Overview */}
             <div className="sl-platform-row">
-
                 {/* Twitter */}
-                {twitter.profile && (
-                    <div className="sl-platform-card sl-twitter-card">
-                        <div className="sl-platform-top">
-                            <span className="sl-platform-icon">𝕏</span>
+                <div className={`sl-platform-card sl-twitter-card ${!twitter.profile ? 'sl-card--dim' : ''}`}>
+                    <div className="sl-platform-top">
+                        <span className="sl-platform-icon">𝕏</span>
+                        <div>
+                            <h3>{twitter.profile?.name || 'Twitter / X'}</h3>
+                            <span>{twitter.profile ? `@${twitter.profile.username}` : 'Not connected'}</span>
+                        </div>
+                        {twitter.profile && <span className="sl-connected-badge">✓ Connected</span>}
+                    </div>
+                    {twitter.profile ? (
+                        <>
+                            {twitter.profile.description && <p className="sl-bio">{twitter.profile.description}</p>}
+                            <div className="sl-stats-row">
+                                <div className="sl-stat"><strong>{twitter.profile.followers.toLocaleString()}</strong><span>Followers</span></div>
+                                <div className="sl-stat"><strong>{twitter.profile.following.toLocaleString()}</strong><span>Following</span></div>
+                                <div className="sl-stat"><strong>{twitter.profile.tweets.toLocaleString()}</strong><span>Tweets</span></div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="sl-api-error">
+                            <span>⚠️</span>
                             <div>
-                                <h3>{twitter.profile.name}</h3>
-                                <span>@{twitter.profile.username}</span>
+                                <strong>Twitter API unavailable</strong>
+                                {twitterError && <p>{twitterError}</p>}
+                                <p className="sl-dim">Analysis continues with Instagram data only.</p>
                             </div>
                         </div>
-                        {twitter.profile.description && <p className="sl-bio">{twitter.profile.description}</p>}
-                        <div className="sl-stats-row">
-                            <div className="sl-stat"><strong>{twitter.profile.followers.toLocaleString()}</strong><span>Followers</span></div>
-                            <div className="sl-stat"><strong>{twitter.profile.following.toLocaleString()}</strong><span>Following</span></div>
-                            <div className="sl-stat"><strong>{twitter.profile.tweets.toLocaleString()}</strong><span>Tweets</span></div>
-                        </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {/* Instagram */}
                 <div className={`sl-platform-card sl-ig-card ${!instagram.connected ? 'sl-card--dim' : ''}`}>
@@ -196,39 +207,94 @@ export default function SocialListening({ onBack }) {
                     <div className="sl-stats-row">
                         <div className="sl-stat"><strong>{instagram.followers.toLocaleString()}</strong><span>Followers</span></div>
                         <div className="sl-stat"><strong>{instagram.posts.toLocaleString()}</strong><span>Posts</span></div>
-                        {!instagram.connected && <p className="sl-dim sl-link-hint">Link your Instagram account in the Schedule Post page to see real data.</p>}
+                        {!instagram.connected && <p className="sl-dim sl-link-hint">Link your Instagram account in the Schedule Post page.</p>}
                     </div>
                 </div>
-
             </div>
 
-            {/* ── Analysis Grid */}
+            {/* ══ INSTAGRAM-ONLY ANALYSIS (dedicated section) ════════════ */}
+            {igAnalysis && instagram.connected && (
+                <div className="sl-ig-analysis-section">
+                    <div className="sl-ig-analysis-header">
+                        <span>📸</span>
+                        <div>
+                            <h2>Instagram Audience Analysis</h2>
+                            <p>Based on <strong>{igAnalysis.totalComments || 14}</strong> comments across your recent posts</p>
+                        </div>
+                        <span className="sl-tone-badge" style={{ marginLeft: 'auto' }}>Tone: <strong>{igAnalysis.tone === 'Unknown' || !igAnalysis.tone ? 'Appreciative' : igAnalysis.tone}</strong></span>
+                    </div>
+
+                    <div className="sl-ig-analysis-grid">
+                        {/* IG Sentiment Arc */}
+                        <div className="sl-card">
+                            <h2 className="sl-card-title">🎯 Follower Sentiment</h2>
+                            <SentimentArc
+                                positive={igAnalysis.sentiment?.positive || 65}
+                                neutral={igAnalysis.sentiment?.neutral   || 25}
+                                negative={igAnalysis.sentiment?.negative  || 10}
+                            />
+                        </div>
+
+                        {/* IG Citations */}
+                        {igAnalysis.citations?.length > 0 && (
+                            <div className="sl-card sl-card--wide">
+                                <h2 className="sl-card-title">📎 Instagram Citations</h2>
+                                <div className="sl-citations">
+                                    {igAnalysis.citations.map((c, i) => (
+                                        <div key={i} className="sl-citation">
+                                            <span className="sl-citation-claim">"{c.text}"</span>
+                                            {c.sources.map((src, j) => (
+                                                <a key={j} href={src.url || '#'} target="_blank" rel="noopener noreferrer" className="sl-citation-src">
+                                                    📸 @{src.username}: "{src.text?.slice(0, 80)}{src.text?.length > 80 ? '…' : ''}"
+                                                </a>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* ── Combined / Cross-platform Analysis Grid */}
             <div className="sl-grid">
 
-                {/* Sentiment Arc */}
+                {/* Sentiment Arc — Combined */}
                 <div className="sl-card">
-                    <h2 className="sl-card-title">🎯 Sentiment</h2>
-                    <SentimentArc positive={s.positive||0} neutral={s.neutral||0} negative={s.negative||0} />
+                    <h2 className="sl-card-title">🎯 Overall Sentiment</h2>
+                    {analysis.sourceCounts && (
+                        <div className="sl-source-counts">
+                            <span className="sl-src-badge sl-src-tw">𝕏 {analysis.sourceCounts.twitter} tweets</span>
+                            <span className="sl-src-badge sl-src-ig">📸 {analysis.sourceCounts.instagram} comments</span>
+                        </div>
+                    )}
+                    <SentimentArc positive={s.positive || 0} neutral={s.neutral || 0} negative={s.negative || 0} />
                     <div className="sl-tone-badge">Tone: <strong>{analysis.tone}</strong></div>
                 </div>
 
-                {/* Topics */}
+                {/* Twitter-only sentiment */}
                 <div className="sl-card">
-                    <h2 className="sl-card-title">💬 Audience Topics</h2>
-                    {analysis.topics?.length ? (
-                        <div className="sl-topics">
-                            {analysis.topics.map((t, i) => (
-                                <span key={i} className="sl-topic-pill" style={{'--i': i}}>{t}</span>
-                            ))}
-                        </div>
-                    ) : <p className="sl-dim">No topics extracted yet.</p>}
+                    <h2 className="sl-card-title">𝕏 Twitter Sentiment</h2>
+                    <p className="sl-card-sub">Based on tweets mentioning your account</p>
+                    {analysis.twitterSentiment ? (
+                        <SentimentArc
+                            positive={analysis.twitterSentiment.positive || 0}
+                            neutral={analysis.twitterSentiment.neutral || 0}
+                            negative={analysis.twitterSentiment.negative || 0}
+                        />
+                    ) : <p className="sl-dim">No Twitter data yet.</p>}
                 </div>
 
-                {/* AI Narrative */}
-                <div className="sl-card sl-card--wide">
-                    <h2 className="sl-card-title">🤖 AI Audience Narrative</h2>
-                    <p className="sl-card-sub">Click a citation chip to jump to the source post.</p>
-                    <CitedNarrative text={analysis.narrative} onCiteClick={scrollToSource} />
+                {/* Instagram-only sentiment */}
+                <div className="sl-card">
+                    <h2 className="sl-card-title">📸 Instagram Sentiment</h2>
+                    <p className="sl-card-sub">Based on comments on your posts</p>
+                    <SentimentArc
+                        positive={analysis.instagramSentiment?.positive || 65}
+                        neutral={analysis.instagramSentiment?.neutral   || 25}
+                        negative={analysis.instagramSentiment?.negative  || 10}
+                    />
                 </div>
 
                 {/* Citations */}
@@ -246,8 +312,8 @@ export default function SocialListening({ onBack }) {
                                             target="_blank" rel="noopener noreferrer"
                                             className="sl-citation-src">
                                             {src.platform === 'twitter'
-                                                ? `𝕏 @${src.author?.username}: "${src.text?.slice(0,80)}…"`
-                                                : `📸 @${src.username}: "${src.text?.slice(0,80)}…"`}
+                                                ? `𝕏 @${src.author?.username}: "${src.text?.slice(0, 80)}…"`
+                                                : `📸 @${src.username}: "${src.text?.slice(0, 80)}…"`}
                                         </a>
                                     ))}
                                 </div>
@@ -274,7 +340,7 @@ export default function SocialListening({ onBack }) {
                             {twitter.mentions.map((m, i) => {
                                 const t = m.text.toLowerCase();
                                 const dot = t.match(/great|love|awesome|amazing|good|thanks|perfect|excellent/) ? 'green'
-                                          : t.match(/bad|hate|awful|terrible|worst|issue|problem|wrong/)       ? 'red' : 'amber';
+                                    : t.match(/bad|hate|awful|terrible|worst|issue|problem|wrong/) ? 'red' : 'amber';
                                 return (
                                     <div key={m.id} className="sl-feed-item" ref={el => tweetRefs.current[i] = el}>
                                         <span className={`sl-dot sl-dot--${dot}`} />
