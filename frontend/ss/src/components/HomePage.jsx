@@ -179,9 +179,9 @@ export default function HomePage({ onNavigate }) {
 
             <div className="progress-indicator">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: "70%" }}></div>
+                <div className="progress-fill" style={{ width: "100%" }}></div>
               </div>
-              <p className="progress-text">Phase 1 Complete: 70% of Core Features Implemented</p>
+              <p className="progress-text">Phase 1 Complete: 100% of Core Features Implemented</p>
             </div>
           </div>
         </div>
