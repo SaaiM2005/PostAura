@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import HomePage from "./components/HomePage";
 import Analytics from "./components/Analytics";
+import SocialListening from "./components/SocialListening";
 import LiquidEther from "./components/LiquidEther";
 import axios from "axios";
 import "./App.css";
@@ -182,6 +183,14 @@ export default function App() {
           ← Back to Home
         </button>
         <Analytics />
+      </div>
+    );
+  }
+
+  if (currentPage === "social-listening") {
+    return (
+      <div className="app-container">
+        <SocialListening onBack={() => setCurrentPage("home")} />
       </div>
     );
   }

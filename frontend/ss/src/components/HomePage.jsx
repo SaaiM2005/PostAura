@@ -34,6 +34,12 @@ export default function HomePage({ onNavigate }) {
       link: "#",
       onClick: () => onNavigate && onNavigate("analytics"),
     },
+    {
+      label: "Social Listening",
+      ariaLabel: "View social listening report and audience insights",
+      link: "#",
+      onClick: () => onNavigate && onNavigate("social-listening"),
+    },
   ]
 
   const socialItems = [
@@ -80,7 +86,7 @@ export default function HomePage({ onNavigate }) {
     { done: true, icon: "✅", title: "Post Scheduling & Auto Posting", sub: "Schedule content across Instagram & Twitter" },
     { done: true, icon: "✅", title: "AI Caption Generation", sub: "AI-powered captions from video content" },
     { done: true, icon: "✅", title: "Analytics Dashboard", sub: "Full dashboard with charts & engagement data" },
-    { done: false, icon: "⏳", title: "Social Listening Dashboard", sub: "Real-time monitoring — Coming Soon" },
+    { done: true,  icon: "✅", title: "Social Listening Dashboard", sub: "Audience insights, sentiment & citations" },
     { done: true, icon: "✅", title: "Advanced Sentiment Analysis", sub: "Emotion detection" },
   ]
 

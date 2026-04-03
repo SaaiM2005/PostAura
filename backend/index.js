@@ -34,6 +34,7 @@ import instagramRoutes from "./src/routes/instagram.routes.js";
 import captionRoutes from "./src/routes/caption.routes.js";
 import twitterRoutes from "./src/routes/twitter.routes.js";
 import analyticsRoutes from "./src/routes/analytics.routes.js";
+import socialListeningRoutes from "./src/routes/socialListening.routes.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use("/api/instagram", instagramRoutes);
 app.use("/api/caption", captionRoutes);
 app.use("/api/twitter", twitterRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/social-listening", socialListeningRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Unified backend (Instagram + Twitter) running on port ${PORT}`));
