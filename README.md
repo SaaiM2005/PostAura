@@ -21,9 +21,9 @@ It enables scheduling posts, generating captions using AI, analyzing trends, and
 |--------|--------|
 | Auto Post Scheduling (Instagram + Twitter) | ✅ Completed |
 | AI-Powered Caption Generator | ✅ Completed |
-| Content Suggestion from Video | 🟢 Phase 1 Completed |
-| Social Listening Dashboard | 🔜 Coming Soon |
-| Advanced Sentiment Analysis | 🔜 Coming Soon |
+| Content Suggestion from Video | ✅ Completed |
+| Social Listening Dashboard | ✅ Completed |
+| Advanced Sentiment Analysis | ✅ Completed|
 
 ---
 
